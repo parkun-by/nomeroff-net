@@ -17,3 +17,4 @@ tensorflow/*
 public/npdetect.php
 Mask_RCNN/*
 centermask2/*
+*.pyc
