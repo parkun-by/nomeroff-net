@@ -32,6 +32,9 @@ yum install python3-devel
 
 # ensure that you have installed gcc compiler
 yum install gcc
+
+# Devel libraries & headers for liblzma
+yum install xz-devel
 ```
 
 ##### For Ubuntu and other Debian-like OS:
