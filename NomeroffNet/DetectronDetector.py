@@ -51,7 +51,7 @@ class Detector:
         Create configs and perform basic setups.
         TODO: create folder config/centermask2/ and put all architecture them
         """
-        centermask2_path= os.path.join(nomeroffnet_path, "centermask2")
+        centermask2_path = os.path.join(nomeroffnet_path, "centermask2")
         sys.path.append(centermask2_path)
         from centermask.config import get_cfg
 

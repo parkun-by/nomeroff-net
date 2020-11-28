@@ -3,7 +3,7 @@
 Nomeroff Net. Automatic numberplate recognition system. Version 1.0.0
 
 ## Introduction
-Nomeroff Net is an opensource python license plate recognition framework based on the application of a segmentation 
+Nomeroff Net is an opensource python license plate recognition framework based on the application of a segmentation
 neural network and cusomized OCR-module powered by [GRU architecture](https://github.com/ria-com/nomeroff-net/blob/master/docs/OCR.md).
 
 The project is now at the initial stage of development, write to us if you are interested in helping us in the formation of a dataset for your country.
@@ -13,7 +13,7 @@ Version 1.0 2.5x faster Nomeroff Net [0.4.x](https://github.com/ria-com/nomeroff
 
 ### Installation from Source (Linux)
 
-Nomeroff Net requires Python >= 3.6 and [opencv 3.4 or latest](https://opencv.org/) 
+Nomeroff Net requires Python >= 3.6 and [opencv 3.4 or latest](https://opencv.org/)
 
 Clone Project and clone related projects
 ```bash
@@ -27,8 +27,8 @@ git clone https://github.com/youngwanLEE/centermask2.git
 # for Opencv
 yum install libSM
 
-# for pycocotools install 
-yum install python3-devel 
+# for pycocotools install
+yum install python3-devel
 
 # ensure that you have installed gcc compiler
 yum install gcc
@@ -77,7 +77,7 @@ Then, run `visualcppbuildtools_full.exe` and select default options:
 ```
 # Specify device
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "0" 
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 os.environ["TF_FORCE_GPU_ALLOW_GROWTH"]="true"
 
 # Import all necessary libraries.
@@ -115,19 +115,19 @@ img = mpimg.imread(img_path)
 
 # Generate image mask.
 cv_imgs_masks = nnet.detect_mask([img])
-    
+
 for cv_img_masks in cv_imgs_masks:
     # Detect points.
     arrPoints = rectDetector.detect(cv_img_masks)
-    
+
     # cut zones
     zones = rectDetector.get_cv_zonesBGR(img, arrPoints, 64, 295)
 
     # find standart
     regionIds, stateIds, countLines = optionsDetector.predict(zones)
     regionNames = optionsDetector.getRegionLabels(regionIds)
-    
-    # find text with postprocessing by standart  
+
+    # find text with postprocessing by standart
     textArr = textDetector.predict(zones)
     textArr = textPostprocessing(textArr, regionNames)
     print(textArr)
