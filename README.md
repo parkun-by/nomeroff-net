@@ -3,7 +3,7 @@
 Nomeroff Net. Automatic numberplate recognition system. Version 2.1.0
 
 ## Introduction
-Nomeroff Net is an opensource python license plate recognition framework based on the application of a segmentation 
+Nomeroff Net is an opensource python license plate recognition framework based on the application of a segmentation
 neural network and cusomized OCR-module powered by [GRU architecture](https://github.com/ria-com/nomeroff-net/blob/master/docs/OCR.md).
 
 The project is now at the initial stage of development, write to us if you are interested in helping us in the formation of a dataset for your country.
@@ -13,7 +13,7 @@ Version 2.1 2.5x faster Nomeroff Net [1.0.x](https://github.com/ria-com/nomeroff
 
 ### Installation from Source (Linux)
 
-Nomeroff Net requires Python >= 3.6 and [opencv 3.4 or latest](https://opencv.org/) 
+Nomeroff Net requires Python >= 3.6 and [opencv 3.4 or latest](https://opencv.org/)
 
 Clone Project and clone related projects
 ```bash
@@ -26,8 +26,8 @@ cd nomeroff-ne
 # for Opencv
 yum install libSM
 
-# for pycocotools install 
-yum install python3-devel 
+# for pycocotools install
+yum install python3-devel
 
 # ensure that you have installed gcc compiler
 yum install gcc
