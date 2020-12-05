@@ -37,9 +37,8 @@ class Nomeroff:
         self.nnet = Detector()
         self.nnet.loadModel(self.NOMEROFF_NET_DIR)
 
-    def recognize(self, path: str) -> List[str]:
+    def recognize(self, img_path: str) -> List[str]:
         # Detect numberplate
-        img_path = os.path.join(self.FILES_PATH, path)
         img = mpimg.imread(img_path)
 
         # Generate image mask.
