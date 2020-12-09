@@ -2,19 +2,15 @@ from flask import Flask, request
 from flask_api import status
 import logging
 from nomeroff import Nomeroff
-from object_pool import ObjectPool
+from pool import Pool
 
-recognizer_pool = ObjectPool(Nomeroff,
-                             min_init=3,
-                             max_capacity=10,
-                             max_reusable=1000,
-                             expires=60*60)
+
+recognizer_pool = Pool(Nomeroff, amount=4)
 
 logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
 
-@app.route("/")
 def hello():
     return "Hello World from numberplate recognizer"
 
@@ -26,7 +22,7 @@ def solve_captcha():
     if request.is_json:
         result_json = request.get_json()
 
-        with recognizer_pool.get() as (recognizer, recognizer_stats):
+        with recognizer_pool.get() as recognizer:
             try:
                 result = recognizer.recognize(result_json["path"])
                 response["data"] = result
