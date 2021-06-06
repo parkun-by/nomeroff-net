@@ -14,6 +14,8 @@ RUN apt-get update && apt-get install -y \
 
 COPY . /app
 
+RUN cd /app/yolov5 && git submodule init && git submodule update
+
 RUN pip install --upgrade pip \
     && pip install "torch>=1.8" \
     && pip install "PyYAML>=5.4" \
