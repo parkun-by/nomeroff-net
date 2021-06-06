@@ -1,12 +1,20 @@
 from typing import List
-from NomeroffNet import textPostprocessing
-from NomeroffNet import TextDetector
-from NomeroffNet import OptionsDetector
-from NomeroffNet import RectDetector
-from NomeroffNet import Detector
+from NomeroffNet.YoloV5Detector import Detector
+from NomeroffNet.BBoxNpPoints import \
+    NpPointsCraft, \
+    getCvZoneRGB, \
+    convertCvZonesRGBtoBGR, \
+    reshapePoints
+
+from NomeroffNet.OptionsDetector import OptionsDetector
+from NomeroffNet.TextDetector import TextDetector
+from NomeroffNet.TextPostprocessing import textPostprocessing
+
 import matplotlib.image as mpimg
 import sys
 import os
+import numpy as np
+import cv2
 
 
 class Nomeroff:
@@ -14,7 +22,8 @@ class Nomeroff:
     Recognize car plates numbers
     """
 
-    def __init__(self, country_code: str = 'by'):
+    def __init__(self, country_code: str = "by"):
+        # Specify device
         os.environ["CUDA_VISIBLE_DEVICES"] = "0"
         os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"
 
@@ -26,7 +35,11 @@ class Nomeroff:
         # Import license plate recognition tools.
 
         # load models
-        self.rectDetector = RectDetector()
+        self.detector = Detector()
+        self.detector.load()
+
+        self.npPointsCraft = NpPointsCraft()
+        self.npPointsCraft.load()
 
         self.optionsDetector = OptionsDetector()
         self.optionsDetector.load("latest")
@@ -34,35 +47,28 @@ class Nomeroff:
         self.textDetector = TextDetector.get_static_module(country_code)()
         self.textDetector.load("latest")
 
-        self.nnet = Detector()
-        self.nnet.loadModel(self.NOMEROFF_NET_DIR)
-
     def recognize(self, img_path: str) -> List[str]:
         # Detect numberplate
-        img = mpimg.imread(img_path)
+        img = cv2.imread(img_path)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-        # Generate image mask.
-        cv_imgs_masks = self.nnet.detect_mask([img])
+        targetBoxes = self.detector.detect_bbox(img)
+        all_points = self.npPointsCraft.detect(img,
+                                               targetBoxes,
+                                               [5, 2, 0])
 
-        recognized_plates = list()
+        # cut zones
+        zones = convertCvZonesRGBtoBGR(
+            [getCvZoneRGB(img, reshapePoints(rect, 1)) for rect in all_points]
+        )
 
-        for cv_img_masks in cv_imgs_masks:
-            # Detect points.
-            arr_points = self.rectDetector.detect(cv_img_masks)
+        # predict zones attributes
+        regionIds, countLines = self.optionsDetector.predict(zones)
+        regionNames = self.optionsDetector.getRegionLabels(regionIds)
 
-            # cut zones
-            zones = self.rectDetector.get_cv_zonesBGR(img, arr_points, 64, 295)
-
-            # find standart
-            region_ids, state_ids, count_lines = \
-                self.optionsDetector.predict(zones)
-
-            region_names = self.optionsDetector.getRegionLabels(region_ids)
-
-            # find text with postprocessing by standart
-            text_arr = self.textDetector.predict(zones)
-            text_arr = textPostprocessing(text_arr, region_names)
-            recognized_plates += text_arr
+        # find text with postprocessing by standart
+        textArr = self.textDetector.predict(zones)
+        recognized_plates = textPostprocessing(textArr, regionNames)
 
         return recognized_plates
 
